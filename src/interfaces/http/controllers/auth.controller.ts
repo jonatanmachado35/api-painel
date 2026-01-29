@@ -5,35 +5,46 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterUserUseCase } from '@application/use-cases/register-user.use-case';
 import { LoginUseCase } from '@application/use-cases/login.use-case';
-import { RegisterDto } from '../dtos/register.dto';
 import { LoginDto } from '../dtos/login.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly jwtService: JwtService,
   ) {}
 
-  @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    const result = await this.registerUserUseCase.execute({
-      email: registerDto.email,
-      password: registerDto.password,
-    });
-
-    return {
-      message: 'User registered successfully',
-      user: result,
-    };
-  }
-
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ 
+    summary: 'Fazer login',
+    description: 'Autentica um usuário e retorna um token JWT válido por 7 dias.',
+  })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Login realizado com sucesso',
+    schema: {
+      example: {
+        access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        user: {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          email: 'usuario@example.com',
+          role: 'USER',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   async login(@Body() loginDto: LoginDto) {
     const result = await this.loginUseCase.execute({
       email: loginDto.email,

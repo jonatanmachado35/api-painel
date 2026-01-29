@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from '@interfaces/http/controllers/auth.controller';
-import { RegisterUserUseCase } from '@application/use-cases/register-user.use-case';
 import { LoginUseCase } from '@application/use-cases/login.use-case';
 import { IUserRepository } from '@domain/repositories/user.repository.interface';
 import { IHashService } from '@application/ports/hash.service.interface';
@@ -31,16 +30,6 @@ import { USER_REPOSITORY, HASH_SERVICE } from '@application/ports/injection-toke
     {
       provide: HASH_SERVICE,
       useClass: BcryptHashService,
-    },
-    {
-      provide: RegisterUserUseCase,
-      useFactory: (
-        userRepository: IUserRepository,
-        hashService: IHashService,
-      ) => {
-        return new RegisterUserUseCase(userRepository, hashService);
-      },
-      inject: [USER_REPOSITORY, HASH_SERVICE],
     },
     {
       provide: LoginUseCase,

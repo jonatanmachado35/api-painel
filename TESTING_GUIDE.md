@@ -10,10 +10,40 @@ Antes de começar, certifique-se de:
 
 ## 🎬 Fluxo Completo de Teste
 
-### 1️⃣ Registrar um Novo Usuário
+### 1️⃣ Login como Admin
+
+⚠️ **IMPORTANTE**: Apenas administradores podem cadastrar novos usuários!
 
 ```bash
-curl -X POST http://localhost:3000/auth/register \
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "admin123456"
+  }'
+```
+
+**Resposta esperada (200):**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid-do-admin",
+    "email": "admin@example.com",
+    "role": "ADMIN"
+  }
+}
+```
+
+🔑 **Copie o `access_token`!** Você vai precisar dele para cadastrar usuários.
+
+---
+
+### 2️⃣ Admin Cadastra um Novo Usuário
+
+```bash
+curl -X POST http://localhost:3000/users/register \
+  -H "Authorization: Bearer TOKEN_DO_ADMIN" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "joao@example.com",
@@ -38,10 +68,11 @@ curl -X POST http://localhost:3000/auth/register \
 - Email válido
 - Senha mínimo 6 caracteres
 - Email único (não pode duplicar)
+- **Apenas admin pode executar este endpoint**
 
 ---
 
-### 2️⃣ Fazer Login
+### 3️⃣ Login como Usuário Comum
 
 ```bash
 curl -X POST http://localhost:3000/auth/login \
@@ -64,11 +95,11 @@ curl -X POST http://localhost:3000/auth/login \
 }
 ```
 
-🔑 **Copie o `access_token`!** Você vai precisar dele para as próximas requisições.
+🔑 **Copie o `access_token` do usuário!** Você vai precisar dele para as próximas requisições.
 
 ---
 
-### 3️⃣ Ver Seus Créditos
+### 4️⃣ Ver Seus Créditos
 
 ```bash
 curl -X GET http://localhost:3000/users/me/credits \
@@ -87,11 +118,11 @@ curl -X GET http://localhost:3000/users/me/credits \
 
 ---
 
-### 4️⃣ Consumir 1 Crédito
+### 5️⃣ Consumir 1 Crédito
 
 ```bash
 curl -X POST http://localhost:3000/users/consume-credit \
-  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+  -H "Authorization: Bearer TOKEN_DO_USUARIO"
 ```
 
 **Resposta esperada (201):**
@@ -106,13 +137,13 @@ curl -X POST http://localhost:3000/users/consume-credit \
 
 ---
 
-### 5️⃣ Tentar Consumir Sem Créditos
+### 6️⃣ Tentar Consumir Sem Créditos
 
 Chame o endpoint 10 vezes até zerar os créditos, então:
 
 ```bash
 curl -X POST http://localhost:3000/users/consume-credit \
-  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+  -H "Authorization: Bearer TOKEN_DO_USUARIO"
 ```
 
 **Resposta esperada (402 Payment Required):**
@@ -123,33 +154,6 @@ curl -X POST http://localhost:3000/users/consume-credit \
   "error": "InsufficientCreditsException"
 }
 ```
-
----
-
-### 6️⃣ Login como Admin
-
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@example.com",
-    "password": "admin123456"
-  }'
-```
-
-**Resposta esperada (200):**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5...",
-  "user": {
-    "id": "uuid-do-admin",
-    "email": "admin@example.com",
-    "role": "ADMIN"
-  }
-}
-```
-
-🔑 **Copie o token do admin!**
 
 ---
 
@@ -199,7 +203,7 @@ curl -X POST http://localhost:3000/users/add-credits \
 }
 ```
 
-🛡️ **Guard funcionando!** Apenas admins podem adicionar.
+🛡️ **Guard funcionando!** Apenas admins podem adicionar e cadastrar usuários.
 
 ---
 
@@ -230,8 +234,9 @@ curl -X GET http://localhost:3000/users/me/credits \
 
 | Teste | Endpoint | Resultado Esperado |
 |-------|----------|-------------------|
-| Registrar usuário válido | POST /auth/register | 201 - Usuário criado com 10 créditos |
-| Login com credenciais corretas | POST /auth/login | 200 - Token JWT retornado |
+| Login como admin | POST /auth/login | 200 - Token JWT retornado |
+| Admin cadastra usuário | POST /users/register | 201 - Usuário criado com 10 créditos |
+| Login de usuário comum | POST /auth/login | 200 - Token JWT retornado |
 | Ver créditos autenticado | GET /users/me/credits | 200 - Saldo correto |
 | Consumir com saldo | POST /users/consume-credit | 201 - Crédito consumido |
 | Admin adiciona créditos | POST /users/add-credits | 201 - Créditos adicionados |
@@ -240,11 +245,12 @@ curl -X GET http://localhost:3000/users/me/credits \
 
 | Teste | Cenário | Código | Mensagem |
 |-------|---------|--------|----------|
+| Usuário comum tenta cadastrar | USER tenta POST /users/register | 401 | Unauthorized |
 | Registro duplicado | Email já existe | 409 | User already exists |
 | Login inválido | Senha errada | 401 | Unauthorized |
 | Sem autenticação | Token ausente | 401 | Unauthorized |
 | Créditos insuficientes | Saldo = 0 | 402 | Insufficient credits |
-| Usuário não admin | USER tenta adicionar | 401 | Unauthorized |
+| Usuário não admin | USER tenta adicionar créditos | 401 | Unauthorized |
 | Validação falha | Senha < 6 chars | 400 | Validation error |
 
 ---
@@ -287,18 +293,19 @@ Você verá:
 
 ## 🎯 Checklist Completo de Testes
 
-- [ ] Registrar usuário novo
-- [ ] Tentar registrar email duplicado (deve falhar)
-- [ ] Login com credenciais corretas
+- [ ] Login como admin
+- [ ] Admin cadastra novo usuário
+- [ ] Tentar cadastrar email duplicado (deve falhar)
+- [ ] Usuário comum tenta cadastrar (deve falhar - 401)
+- [ ] Login como usuário comum
 - [ ] Login com senha errada (deve falhar)
 - [ ] Ver créditos sem token (deve falhar)
 - [ ] Ver créditos com token válido
 - [ ] Consumir 1 crédito
 - [ ] Consumir todos os créditos
-- [ ] Tentar consumir sem saldo (deve falhar)
-- [ ] Login como admin
+- [ ] Tentar consumir sem saldo (deve falhar - 402)
 - [ ] Admin adiciona créditos
-- [ ] Usuário comum tenta adicionar (deve falhar)
+- [ ] Usuário comum tenta adicionar créditos (deve falhar - 401)
 - [ ] Verificar créditos após adição
 - [ ] Testar validação de email inválido
 - [ ] Testar validação de senha curta
