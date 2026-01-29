@@ -5,7 +5,7 @@ import { ConsumeCreditUseCase } from '@application/use-cases/consume-credit.use-
 import { AddCreditsUseCase } from '@application/use-cases/add-credits.use-case';
 import { GetUserCreditsUseCase } from '@application/use-cases/get-user-credits.use-case';
 import { IUserRepository } from '@domain/repositories/user.repository.interface';
-import { IHashService } from '@domain/services/hash.service.interface';
+import { IHashService } from '@application/ports/hash.service.interface';
 import { PrismaUserRepository } from '@infrastructure/repositories/prisma-user.repository';
 import { BcryptHashService } from '@infrastructure/services/bcrypt-hash.service';
 import { PrismaService } from '@infrastructure/database/prisma.service';
