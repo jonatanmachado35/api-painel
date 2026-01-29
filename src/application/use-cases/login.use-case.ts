@@ -5,6 +5,7 @@ import { UnauthorizedException } from '@domain/exceptions/domain.exceptions';
 export interface LoginInput {
   email: string;
   password: string;
+  sessionToken: string;
 }
 
 export interface LoginOutput {
@@ -34,6 +35,10 @@ export class LoginUseCase {
     if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
+
+    // Atualiza o token da sessão, invalidando qualquer sessão anterior
+    user.updateSessionToken(input.sessionToken);
+    await this.userRepository.save(user);
 
     return {
       userId: user.id,

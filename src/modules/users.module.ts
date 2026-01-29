@@ -9,12 +9,14 @@ import { IHashService } from '@application/ports/hash.service.interface';
 import { PrismaUserRepository } from '@infrastructure/repositories/prisma-user.repository';
 import { BcryptHashService } from '@infrastructure/services/bcrypt-hash.service';
 import { PrismaService } from '@infrastructure/database/prisma.service';
+import { SessionGuard } from '@interfaces/http/guards/session.guard';
 import { USER_REPOSITORY, HASH_SERVICE } from '@application/ports/injection-tokens';
 
 @Module({
   controllers: [UsersController],
   providers: [
     PrismaService,
+    SessionGuard,
     {
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,

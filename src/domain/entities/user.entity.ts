@@ -9,6 +9,7 @@ export interface UserProps {
   password: string;
   credits: number;
   role: UserRole;
+  currentSessionToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,6 +48,15 @@ export class User {
 
   get role(): UserRole {
     return this.props.role;
+  }
+
+  get currentSessionToken(): string | undefined {
+    return this.props.currentSessionToken;
+  }
+
+  updateSessionToken(token: string): void {
+    this.props.currentSessionToken = token;
+    this.props.updatedAt = new Date();
   }
 
   get createdAt(): Date {

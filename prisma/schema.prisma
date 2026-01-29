@@ -14,13 +14,14 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  credits   Int      @default(0)
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  email                String   @unique
+  password             String
+  credits              Int      @default(0)
+  role                 UserRole @default(USER)
+  currentSessionToken  String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@map("users")
 }

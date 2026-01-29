@@ -104,3 +104,4 @@ O servidor já roda com hot-reload. Basta salvar os arquivos.
 - Novos usuários começam com **10 créditos**
 - Apenas **admins** podem adicionar créditos
 - Consumir crédito sem saldo retorna erro **402 Payment Required**
+- **🔒 Sessão Única**: Apenas um login ativo por usuário. Se alguém fizer login novamente com a mesma conta, a sessão anterior é automaticamente invalidada e retorna erro **401 Unauthorized**

@@ -19,6 +19,7 @@ import { ConsumeCreditUseCase } from '@application/use-cases/consume-credit.use-
 import { AddCreditsUseCase } from '@application/use-cases/add-credits.use-case';
 import { GetUserCreditsUseCase } from '@application/use-cases/get-user-credits.use-case';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { SessionGuard } from '../guards/session.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { RegisterDto } from '../dtos/register.dto';
 import { AddCreditsDto } from '../dtos/add-credits.dto';
@@ -26,7 +27,7 @@ import { AddCreditsDto } from '../dtos/add-credits.dto';
 @ApiTags('users')
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, SessionGuard)
 export class UsersController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,

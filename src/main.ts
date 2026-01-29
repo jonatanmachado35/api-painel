@@ -39,7 +39,9 @@ async function bootstrap() {
       `## ⚠️ Importante\n\n` +
       `**Apenas administradores** podem cadastrar novos usuários. Usuários comuns podem apenas:\n` +
       `- Ver seus próprios créditos\n` +
-      `- Consumir seus créditos`
+      `- Consumir seus créditos\n\n` +
+      `## 🔒 Sessão Única\n\n` +
+      `Apenas **um login ativo** por usuário. Se houver um novo login, a sessão anterior é invalidada automaticamente.`
     )
     .setVersion('1.0')
     .addTag('auth', 'Endpoints de autenticação')

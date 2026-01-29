@@ -46,11 +46,21 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   async login(@Body() loginDto: LoginDto) {
+    // Gera o token JWT primeiro
+    const temporaryPayload = {
+      email: loginDto.email,
+      timestamp: Date.now(),
+    };
+    const sessionToken = this.jwtService.sign(temporaryPayload);
+
+    // Executa login e salva o token no banco
     const result = await this.loginUseCase.execute({
       email: loginDto.email,
       password: loginDto.password,
+      sessionToken,
     });
 
+    // Gera o token final com os dados corretos
     const token = this.jwtService.sign({
       sub: result.userId,
       email: result.email,
