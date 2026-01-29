@@ -1,0 +1,166 @@
+
+ █████╗ ██████╗ ██╗    ██████╗  █████╗ ██╗███╗   ██╗███████╗██╗     
+██╔══██╗██╔══██╗██║    ██╔══██╗██╔══██╗██║████╗  ██║██╔════╝██║     
+███████║██████╔╝██║    ██████╔╝███████║██║██╔██╗ ██║█████╗  ██║     
+██╔══██║██╔═══╝ ██║    ██╔═══╝ ██╔══██║██║██║╚██╗██║██╔══╝  ██║     
+██║  ██║██║     ██║    ██║     ██║  ██║██║██║ ╚████║███████╗███████╗
+╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝     ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝
+
+═══════════════════════════════════════════════════════════════════════
+              🚀 Sistema de Gestão de Créditos com NestJS
+═══════════════════════════════════════════════════════════════════════
+
+✨ CARACTERÍSTICAS
+
+  ✅ Clean Architecture           ✅ SOLID Principles
+  ✅ Domain-Driven Design          ✅ Repository Pattern
+  ✅ JWT Authentication            ✅ Role-Based Access
+  ✅ Prisma ORM + SQLite          ✅ TypeScript Strict Mode
+  ✅ Bcrypt Password Hashing       ✅ Class Validator
+  ✅ Exception Filters             ✅ Dependency Injection
+
+───────────────────────────────────────────────────────────────────────
+
+📂 ESTRUTURA DO PROJETO
+
+  src/
+  ├── 🎯 domain/              Regras de negócio puras
+  │   ├── entities/           User entity com lógica
+  │   ├── repositories/       Interfaces (ports)
+  │   └── exceptions/         Domain exceptions
+  │
+  ├── 📋 application/         Casos de uso
+  │   ├── use-cases/          Lógica de aplicação
+  │   │   ├── register-user   Registrar usuário
+  │   │   ├── login           Autenticar
+  │   │   ├── consume-credit  Consumir 1 crédito
+  │   │   ├── add-credits     Adicionar créditos (admin)
+  │   │   └── get-credits     Ver saldo
+  │   └── ports/              Service interfaces
+  │
+  ├── 🔧 infrastructure/      Implementações técnicas
+  │   ├── database/           PrismaService
+  │   ├── repositories/       Prisma implementations
+  │   └── services/           Bcrypt hash service
+  │
+  ├── 🌐 interfaces/          Camada HTTP
+  │   └── http/
+  │       ├── controllers/    Auth & Users
+  │       ├── dtos/           Validation DTOs
+  │       ├── guards/         JWT & Admin guards
+  │       ├── strategies/     Passport JWT
+  │       └── filters/        Exception handling
+  │
+  └── 📦 modules/             NestJS modules
+      ├── auth.module         Authentication
+      └── users.module        User management
+
+───────────────────────────────────────────────────────────────────────
+
+🔐 ENDPOINTS DA API
+
+  Públicos:
+  POST   /auth/register          Registrar usuário
+  POST   /auth/login             Login com JWT
+
+  Autenticados (JWT):
+  GET    /users/me/credits       Ver saldo de créditos
+  POST   /users/consume-credit   Consumir 1 crédito
+
+  Admin (JWT + Role):
+  POST   /users/add-credits      Adicionar créditos a usuário
+
+───────────────────────────────────────────────────────────────────────
+
+🎯 REGRAS DE NEGÓCIO
+
+  • Novos usuários começam com 10 créditos
+  • Cada chamada ao endpoint consome 1 crédito
+  • Consumir sem saldo retorna HTTP 402 (Payment Required)
+  • Apenas admins podem adicionar créditos
+  • Senhas criptografadas com bcrypt (10 rounds)
+  • Tokens JWT expiram em 7 dias
+  • Validação automática de DTOs
+
+───────────────────────────────────────────────────────────────────────
+
+🚀 INÍCIO RÁPIDO
+
+  1. Setup automático:
+     $ ./setup.sh
+
+  2. Iniciar servidor:
+     $ npm run start:dev
+
+  3. Testar:
+     $ curl http://localhost:3000/auth/register \
+       -H "Content-Type: application/json" \
+       -d '{"email":"test@example.com","password":"senha123"}'
+
+  4. Prisma Studio (GUI):
+     $ npm run prisma:studio
+
+───────────────────────────────────────────────────────────────────────
+
+📚 DOCUMENTAÇÃO COMPLETA
+
+  📄 INDEX.md             → Índice de toda documentação
+  📄 QUICKSTART.md        → Guia rápido de 5 minutos
+  📄 README.md            → Documentação completa
+  📄 ARCHITECTURE.md      → Explicação da arquitetura
+  📄 TESTING_GUIDE.md     → Como testar a API
+  📄 TESTING.md           → Testes automatizados
+  📄 COMMANDS.md          → Comandos úteis
+  📄 DEPLOYMENT.md        → Deploy para produção
+
+───────────────────────────────────────────────────────────────────────
+
+🔑 CREDENCIAIS ADMIN PADRÃO
+
+  Email:    admin@example.com
+  Senha:    admin123456
+
+  ⚠️  Altere em produção!
+
+───────────────────────────────────────────────────────────────────────
+
+🛠️ TECNOLOGIAS
+
+  NestJS 10      Prisma 5       SQLite         TypeScript 5
+  JWT            Bcrypt         Passport       Class Validator
+  Jest           Supertest      ESLint         Prettier
+
+───────────────────────────────────────────────────────────────────────
+
+💡 PRINCÍPIOS APLICADOS
+
+  • Clean Architecture - Separação em camadas
+  • SOLID - Código extensível e manutenível
+  • DDD - Domínio rico e independente
+  • TDD - Testável por design
+  • Dependency Injection - Inversão de controle
+  • Repository Pattern - Abstração de dados
+
+───────────────────────────────────────────────────────────────────────
+
+📊 STATUS DO PROJETO
+
+  [✅] Configuração base             [✅] Domain layer
+  [✅] Application layer             [✅] Infrastructure layer
+  [✅] Interface layer               [✅] Authentication
+  [✅] Authorization                 [✅] Credit system
+  [✅] Exception handling            [✅] Validation
+  [✅] Documentação completa         [✅] Scripts de setup
+  [✅] Testes unitários exemplo      [✅] Postman collection
+
+───────────────────────────────────────────────────────────────────────
+
+🎉 PRONTO PARA USAR!
+
+   Desenvolvido seguindo as melhores práticas de engenharia de software
+   
+   🌟 Star no GitHub se gostou!
+   🐛 Reporte bugs via Issues
+   💡 Contribuições são bem-vindas
+
+═══════════════════════════════════════════════════════════════════════
