@@ -6,6 +6,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { ConsumeCreditUseCase } from '@application/use-cases/consume-credit.use-case';
 import { AddCreditsUseCase } from '@application/use-cases/add-credits.use-case';
 import { GetUserCreditsUseCase } from '@application/use-cases/get-user-credits.use-case';
@@ -23,7 +24,7 @@ export class UsersController {
   ) {}
 
   @Get('me/credits')
-  async getMyCredits(@Request() req) {
+  async getMyCredits(@Request() req: ExpressRequest & { user: { userId: string } }) {
     const result = await this.getUserCreditsUseCase.execute({
       userId: req.user.userId,
     });
@@ -32,7 +33,7 @@ export class UsersController {
   }
 
   @Post('consume-credit')
-  async consumeCredit(@Request() req) {
+  async consumeCredit(@Request() req: ExpressRequest & { user: { userId: string } }) {
     const result = await this.consumeCreditUseCase.execute({
       userId: req.user.userId,
     });
@@ -42,7 +43,7 @@ export class UsersController {
 
   @Post('add-credits')
   @UseGuards(AdminGuard)
-  async addCredits(@Request() req, @Body() addCreditsDto: AddCreditsDto) {
+  async addCredits(@Request() req: ExpressRequest & { user: { userId: string } }, @Body() addCreditsDto: AddCreditsDto) {
     const result = await this.addCreditsUseCase.execute({
       adminId: req.user.userId,
       targetUserId: addCreditsDto.targetUserId,

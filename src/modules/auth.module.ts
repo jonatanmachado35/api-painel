@@ -10,6 +10,7 @@ import { PrismaUserRepository } from '@infrastructure/repositories/prisma-user.r
 import { BcryptHashService } from '@infrastructure/services/bcrypt-hash.service';
 import { PrismaService } from '@infrastructure/database/prisma.service';
 import { JwtStrategy } from '@interfaces/http/strategies/jwt.strategy';
+import { USER_REPOSITORY, HASH_SERVICE } from '@application/ports/injection-tokens';
 
 @Module({
   imports: [
@@ -24,11 +25,11 @@ import { JwtStrategy } from '@interfaces/http/strategies/jwt.strategy';
     PrismaService,
     JwtStrategy,
     {
-      provide: IUserRepository,
+      provide: USER_REPOSITORY,
       useClass: PrismaUserRepository,
     },
     {
-      provide: IHashService,
+      provide: HASH_SERVICE,
       useClass: BcryptHashService,
     },
     {
@@ -39,7 +40,7 @@ import { JwtStrategy } from '@interfaces/http/strategies/jwt.strategy';
       ) => {
         return new RegisterUserUseCase(userRepository, hashService);
       },
-      inject: [IUserRepository, IHashService],
+      inject: [USER_REPOSITORY, HASH_SERVICE],
     },
     {
       provide: LoginUseCase,
@@ -49,7 +50,7 @@ import { JwtStrategy } from '@interfaces/http/strategies/jwt.strategy';
       ) => {
         return new LoginUseCase(userRepository, hashService);
       },
-      inject: [IUserRepository, IHashService],
+      inject: [USER_REPOSITORY, HASH_SERVICE],
     },
   ],
 })
